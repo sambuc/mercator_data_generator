@@ -1,8 +1,3 @@
-use std::fs::File;
-use std::io::BufWriter;
-
-use serde::Serialize;
-
 #[derive(Clone, Debug, Deserialize, Serialize)]
 pub struct Space {
     pub name: String,
@@ -47,51 +42,4 @@ pub struct Properties {
     #[serde(rename = "type")]
     pub type_name: String,
     pub id: String,
-}
-
-impl SpatialObject {
-    pub fn new(shapes: Vec<Shape>, id: String) -> Self {
-        SpatialObject {
-            shapes,
-            properties: Properties {
-                type_name: "Feature".to_string(),
-                id,
-            },
-        }
-    }
-}
-
-mod json {
-    use super::*;
-
-    pub fn store<T>(data: T, to: &str)
-    where
-        T: Serialize,
-    {
-        let file_out =
-            File::create(to).unwrap_or_else(|e| panic!("Unable to create file: {}: {}", to, e));
-
-        // We create a buffered writer from the file we get
-        let writer = BufWriter::new(&file_out);
-
-        serde_json::to_writer(writer, &data).unwrap();
-    }
-}
-
-pub fn store<S, T>(name: S, data: T)
-where
-    S: Into<String>,
-    T: Serialize,
-{
-    let name = name.into();
-    /*
-        // Convert Reference Space definitions
-        let fn_out = format!("{}.spaces.json", name);
-
-        json::store::<Vec<json::Space>>(data, &fn_out);
-    */
-    // Convert Spatial Objects
-    let fn_out = format!("{}.objects.json", name);
-
-    json::store(data, &fn_out);
 }

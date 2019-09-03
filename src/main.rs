@@ -3,12 +3,41 @@ extern crate serde_derive;
 
 mod storage;
 
-use rand::distributions::{Distribution, Uniform};
-
+use rand::distributions::Distribution;
+use rand::distributions::Uniform;
 use rand::prelude::ThreadRng;
+use std::fs::File;
+use std::io::BufWriter;
+
+use serde::Serialize;
+
 use storage::*;
 
 const POSITIONS_PER_SHAPE: usize = 1000;
+
+impl SpatialObject {
+    pub fn new(shapes: Vec<Shape>, id: String) -> Self {
+        SpatialObject {
+            shapes,
+            properties: Properties {
+                type_name: "Feature".to_string(),
+                id,
+            },
+        }
+    }
+}
+
+fn store<T>(name: &str, data: T)
+where
+    T: Serialize,
+{
+    let to = format!("{}.objects.json", name);
+    let file_out =
+        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file: {}: {}", to, e));
+    let writer = BufWriter::new(&file_out);
+
+    serde_json::to_writer(writer, &data).unwrap();
+}
 
 fn get_point(space_name: &str, rng: &mut ThreadRng, die: &Uniform<f64>) -> SpatialObject {
     let mut shapes = Vec::with_capacity(POSITIONS_PER_SHAPE);
@@ -33,7 +62,7 @@ fn get_space(nb_points: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
         objects.push(get_point(&space_name, rng, &die));
     }
 
-    storage::store(format!("{}k", nb_points).as_str(), objects);
+    store(format!("{}k", nb_points).as_str(), objects);
 }
 
 fn main() {
