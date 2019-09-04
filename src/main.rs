@@ -27,6 +27,45 @@ impl SpatialObject {
     }
 }
 
+fn get_reference_space() -> Vec<Space> {
+    vec![Space {
+        name: "std".to_string(),
+        origin: vec![0.0, 0.0, 0.0],
+        axes: vec![
+            Axis {
+                measurement_unit: "m".to_string(),
+                graduation: Graduation {
+                    set: "N".to_string(),
+                    minimum: 0.0,
+                    maximum: 1.0,
+                    steps: 1_000_000_000,
+                },
+                unit_vector: vec![1.0, 0.0, 0.0],
+            },
+            Axis {
+                measurement_unit: "m".to_string(),
+                graduation: Graduation {
+                    set: "N".to_string(),
+                    minimum: 0.0,
+                    maximum: 1.0,
+                    steps: 1_000_000_000,
+                },
+                unit_vector: vec![0.0, 1.0, 0.0],
+            },
+            Axis {
+                measurement_unit: "m".to_string(),
+                graduation: Graduation {
+                    set: "N".to_string(),
+                    minimum: 0.0,
+                    maximum: 1.0,
+                    steps: 1_000_000_000,
+                },
+                unit_vector: vec![0.0, 0.0, 1.0],
+            },
+        ],
+    }]
+}
+
 fn store<T>(name: &str, data: T)
 where
     T: Serialize,
@@ -37,6 +76,13 @@ where
     let writer = BufWriter::new(&file_out);
 
     serde_json::to_writer(writer, &data).unwrap();
+
+    let to = format!("{}.spaces.json", name);
+    let file_out =
+        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file: {}: {}", to, e));
+    let writer = BufWriter::new(&file_out);
+
+    serde_json::to_writer(writer, &get_reference_space()).unwrap();
 }
 
 fn get_point(space_name: &str, rng: &mut ThreadRng, die: &Uniform<f64>) -> SpatialObject {
