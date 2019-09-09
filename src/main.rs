@@ -1,31 +1,13 @@
-#[macro_use]
-extern crate serde_derive;
-
-mod storage;
-
-use rand::distributions::Distribution;
-use rand::distributions::Uniform;
-use rand::prelude::ThreadRng;
 use std::fs::File;
 use std::io::BufWriter;
 
+use mercator_db::json::model::*;
+use rand::distributions::Distribution;
+use rand::distributions::Uniform;
+use rand::prelude::ThreadRng;
 use serde::Serialize;
 
-use storage::*;
-
 const POSITIONS_PER_SHAPE: usize = 1000;
-
-impl SpatialObject {
-    pub fn new(shapes: Vec<Shape>, id: String) -> Self {
-        SpatialObject {
-            shapes,
-            properties: Properties {
-                type_name: "Feature".to_string(),
-                id,
-            },
-        }
-    }
-}
 
 fn get_reference_space() -> Vec<Space> {
     vec![Space {
@@ -96,7 +78,13 @@ fn get_point(space_name: &str, rng: &mut ThreadRng, die: &Uniform<f64>) -> Spati
         });
     }
 
-    SpatialObject::new(shapes, format!("oid{}", die.sample(rng)))
+    SpatialObject {
+        properties: Properties {
+            type_name: "Feature".to_string(),
+            id: format!("oid{}", die.sample(rng)),
+        },
+        shapes,
+    }
 }
 
 fn get_space(nb_points: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {

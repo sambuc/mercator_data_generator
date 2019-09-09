@@ -24,6 +24,15 @@ This enables the index implementations to be agnostic from the underlying data s
 
 ## Quick start
 
+Checkout the dependencies in the parent folder:
+ * mercator_db
+ * ironsea_index
+ * ironsea_store
+ * ironsea_table
+ * ironsea_index_hashmap
+ * ironsea_index_sfc_dbc
+ * ironsea_table_vector
+ 
 Adapt the main function to generate the datasets you want, then run:
 
 ```sh
