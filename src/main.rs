@@ -6,6 +6,7 @@ use rand::distributions::Distribution;
 use rand::distributions::Uniform;
 use rand::prelude::ThreadRng;
 use serde::Serialize;
+use structopt::StructOpt;
 
 const POSITIONS_PER_SHAPE: usize = 1000;
 
@@ -99,14 +100,19 @@ fn get_space(nb_points: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
     store(format!("{}k", nb_points).as_str(), objects);
 }
 
+#[derive(StructOpt, Debug)]
+struct Opt {
+    /// List of Number of features to be generated.
+    datasets: Vec<usize>,
+}
+
 fn main() {
+    let opt = Opt::from_args();
+
     let mut rng = rand::thread_rng();
     let die = Uniform::from(0.0..1.0);
 
-    get_space(1, &mut rng, &die);
-    get_space(10, &mut rng, &die);
-    get_space(100, &mut rng, &die);
-    get_space(1000, &mut rng, &die);
-    get_space(10000, &mut rng, &die);
-    //get_space(40000, &mut rng, &die);
+    for dataset in opt.datasets {
+        get_space(dataset, &mut rng, &die);
+    }
 }

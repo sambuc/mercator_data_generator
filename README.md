@@ -33,10 +33,15 @@ Checkout the dependencies in the parent folder:
  * ironsea_index_sfc_dbc
  * ironsea_table_vector
  
-Adapt the main function to generate the datasets you want, then run:
+This tool takes as arguments a list of number of features to generate.
+One thousand (1000) positions are generated per feature. For each number
+provided a dataset will be generated under:
+ * `number`k.spaces.json -- The reference spaces for that dataset
+ * `number`k.objects.json -- The objects randomly generated (`number` features, each with 1000 positions.)
 
+Example to create 3 datasets, of 1, 10 and 100 features respectively:
 ```sh
-cargo run --release
+cargo run --release -- 1 10 100
 ```
 
 ## Acknowledgements
