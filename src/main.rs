@@ -1,7 +1,8 @@
 use std::fs::File;
 use std::io::BufWriter;
 
-use mercator_db::json::model::*;
+use mercator_db::storage::model::v1::Shape;
+use mercator_db::storage::model::*;
 use rand::distributions::Distribution;
 use rand::distributions::Uniform;
 use rand::prelude::ThreadRng;
