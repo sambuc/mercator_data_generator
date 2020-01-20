@@ -56,19 +56,25 @@ fn store<T>(name: &str, data: T)
 where
     T: Serialize,
 {
-    let to = format!("{}.objects.json", name);
-    let file_out =
-        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file: {}: {}", to, e));
-    let writer = BufWriter::new(&file_out);
-
-    serde_json::to_writer(writer, &data).unwrap();
+    // Serialize first the spaces, as this is much smaller than the data point.
+    // This matters in case the drop() call is not made at the time of the
+    // second definition of the variables, but only at the end fo the block.
 
     let to = format!("{}.spaces.json", name);
     let file_out =
-        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file: {}: {}", to, e));
+        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file '{}': {}", to, e));
     let writer = BufWriter::new(&file_out);
 
-    serde_json::to_writer(writer, &get_reference_space()).unwrap();
+    serde_json::to_writer(writer, &get_reference_space())
+        .unwrap_or_else(|e| panic!("Unable to serialize to '{}': {}", to, e));
+
+    let to = format!("{}.objects.json", name);
+    let file_out =
+        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file '{}': {}", to, e));
+    let writer = BufWriter::new(&file_out);
+
+    serde_json::to_writer(writer, &data)
+        .unwrap_or_else(|e| panic!("Unable to serialize to '{}': {}", to, e));
 }
 
 fn get_point(space_name: &str, rng: &mut ThreadRng, die: &Uniform<f64>) -> SpatialObject {
