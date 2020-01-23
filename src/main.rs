@@ -77,8 +77,14 @@ where
         .unwrap_or_else(|e| panic!("Unable to serialize to '{}': {}", to, e));
 }
 
-fn get_point(space_name: &str, rng: &mut ThreadRng, die: &Uniform<f64>) -> SpatialObject {
+fn get_point(
+    factor: usize,
+    space_name: &str,
+    rng: &mut ThreadRng,
+    die: &Uniform<f64>,
+) -> Vec<SpatialObject> {
     let mut shapes = Vec::with_capacity(POSITIONS_PER_SHAPE);
+    let mut v = Vec::with_capacity(factor);
 
     for _ in 0..POSITIONS_PER_SHAPE {
         shapes.push(Shape {
@@ -88,22 +94,36 @@ fn get_point(space_name: &str, rng: &mut ThreadRng, die: &Uniform<f64>) -> Spati
         });
     }
 
-    SpatialObject {
+    for _ in 0..(factor - 1) {
+        v.push(SpatialObject {
+            properties: Properties {
+                type_name: "Feature".to_string(),
+                id: format!("oid{}", die.sample(rng)),
+            },
+            shapes: shapes.clone(),
+        });
+    }
+
+    // Last overlaping point can own the vector of position, saves a clone which
+    // would be simply discarded right away.
+    v.push(SpatialObject {
         properties: Properties {
             type_name: "Feature".to_string(),
             id: format!("oid{}", die.sample(rng)),
         },
         shapes,
-    }
+    });
+
+    v
 }
 
-fn get_space(nb_points: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
+fn get_space(nb_points: usize, factor: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
     let space_name = "std";
 
     let mut objects = Vec::with_capacity(nb_points);
 
     for _ in 0..nb_points {
-        objects.push(get_point(&space_name, rng, &die));
+        objects.append(&mut get_point(factor, &space_name, rng, &die));
     }
 
     store(format!("{}k", nb_points).as_str(), objects);
@@ -111,6 +131,9 @@ fn get_space(nb_points: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
 
 #[derive(StructOpt, Debug)]
 struct Opt {
+    /// Number of ids per positions generated
+    #[structopt(long, short)]
+    factor: Option<usize>,
     /// List of Number of features to be generated.
     datasets: Vec<usize>,
 }
@@ -118,10 +141,15 @@ struct Opt {
 fn main() {
     let opt = Opt::from_args();
 
+    let factor = match opt.factor {
+        None => 1,
+        Some(val) => val,
+    };
+
     let mut rng = rand::thread_rng();
     let die = Uniform::from(0.0..1.0);
 
     for dataset in opt.datasets {
-        get_space(dataset, &mut rng, &die);
+        get_space(dataset, factor, &mut rng, &die);
     }
 }

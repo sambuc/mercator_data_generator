@@ -39,9 +39,17 @@ provided a dataset will be generated under:
  * `number`k.spaces.json -- The reference spaces for that dataset
  * `number`k.objects.json -- The objects randomly generated (`number` features, each with 1000 positions.)
 
-Example to create 3 datasets, of 1, 10 and 100 features respectively:
+You can also specify a factor value, which will generate for each feature `factor` times features sharing the same 1000 positions.
+
+For example:
 ```sh
+# Generate 3 datasets, with 1k, 10k, 100k, random positions and
+#  1, 10 & 100 features ids.
 cargo run --release -- 1 10 100
+
+# Generate 3 datasets, with 1k, 10k, 100k, random positions and
+#  2, 20, 200 features ids.
+cargo run --release -- 1 10 100 -f 2
 ```
 
 ## Acknowledgements
