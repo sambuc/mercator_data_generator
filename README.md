@@ -1,6 +1,6 @@
 # Mercator Test data generator
 
-Small tool to generate test data for Mercator, a spatial index.
+Tool to generate test data for Mercator, a spatial index.
 
 ## Mercator: Spatial Index
 
@@ -32,7 +32,7 @@ Checkout the dependencies in the parent folder:
  * ironsea_index_hashmap
  * ironsea_index_sfc_dbc
  * ironsea_table_vector
- 
+
 This tool takes as arguments a list of number of features to generate.
 One thousand (1000) positions are generated per feature. For each number
 provided a dataset will be generated under:
