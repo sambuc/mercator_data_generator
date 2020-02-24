@@ -13,41 +13,34 @@ use structopt::StructOpt;
 
 const POSITIONS_PER_SHAPE: usize = 1000;
 
+fn get_axis(
+    unit_vector: Vec<f64>,
+    minimum: f64,
+    maximum: f64,
+    steps: u64,
+    measurement_unit: &str,
+    set: &str,
+) -> Axis {
+    Axis {
+        measurement_unit: measurement_unit.to_string(),
+        graduation: Graduation {
+            set: set.to_string(),
+            minimum,
+            maximum,
+            steps,
+        },
+        unit_vector,
+    }
+}
+
 fn get_reference_space() -> Vec<Space> {
     vec![Space {
         name: "std".to_string(),
         origin: vec![0.0, 0.0, 0.0],
         axes: vec![
-            Axis {
-                measurement_unit: "m".to_string(),
-                graduation: Graduation {
-                    set: "N".to_string(),
-                    minimum: 0.0,
-                    maximum: 1.0,
-                    steps: 1_000_000_000,
-                },
-                unit_vector: vec![1.0, 0.0, 0.0],
-            },
-            Axis {
-                measurement_unit: "m".to_string(),
-                graduation: Graduation {
-                    set: "N".to_string(),
-                    minimum: 0.0,
-                    maximum: 1.0,
-                    steps: 1_000_000_000,
-                },
-                unit_vector: vec![0.0, 1.0, 0.0],
-            },
-            Axis {
-                measurement_unit: "m".to_string(),
-                graduation: Graduation {
-                    set: "N".to_string(),
-                    minimum: 0.0,
-                    maximum: 1.0,
-                    steps: 1_000_000_000,
-                },
-                unit_vector: vec![0.0, 0.0, 1.0],
-            },
+            get_axis(vec![1.0, 0.0, 0.0], 0.0, 1.0, 1_000_000_000, "m", "R"),
+            get_axis(vec![0.0, 1.0, 0.0], 0.0, 1.0, 1_000_000_000, "m", "R"),
+            get_axis(vec![0.0, 0.0, 1.0], 0.0, 1.0, 1_000_000_000, "m", "R"),
         ],
     }]
 }
@@ -134,6 +127,7 @@ struct Opt {
     /// Number of ids per positions generated
     #[structopt(long, short)]
     factor: Option<usize>,
+
     /// List of Number of features to be generated.
     datasets: Vec<usize>,
 }
