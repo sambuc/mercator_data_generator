@@ -45,23 +45,11 @@ fn get_reference_space() -> Vec<Space> {
     }]
 }
 
-fn store<T>(name: &str, data: T)
+fn store<T>(basename: &str, data: T)
 where
     T: Serialize,
 {
-    // Serialize first the spaces, as this is much smaller than the data point.
-    // This matters in case the drop() call is not made at the time of the
-    // second definition of the variables, but only at the end fo the block.
-
-    let to = format!("{}.spaces.json", name);
-    let file_out =
-        File::create(&to).unwrap_or_else(|e| panic!("Unable to create file '{}': {}", to, e));
-    let writer = BufWriter::new(&file_out);
-
-    serde_json::to_writer(writer, &get_reference_space())
-        .unwrap_or_else(|e| panic!("Unable to serialize to '{}': {}", to, e));
-
-    let to = format!("{}.objects.json", name);
+    let to = format!("{}.json", basename);
     let file_out =
         File::create(&to).unwrap_or_else(|e| panic!("Unable to create file '{}': {}", to, e));
     let writer = BufWriter::new(&file_out);
@@ -70,7 +58,7 @@ where
         .unwrap_or_else(|e| panic!("Unable to serialize to '{}': {}", to, e));
 }
 
-fn get_point(
+fn generate_points(
     factor: usize,
     space_name: &str,
     rng: &mut ThreadRng,
@@ -110,16 +98,23 @@ fn get_point(
     v
 }
 
-fn get_space(nb_points: usize, factor: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
+fn generate_data(nb_points: usize, factor: usize, rng: &mut ThreadRng, die: &Uniform<f64>) {
     let space_name = "std";
 
     let mut objects = Vec::with_capacity(nb_points);
 
+    // First Serialize the space definition
+    store(
+        format!("{}k.spaces", nb_points).as_str(),
+        get_reference_space(),
+    );
+
+    // Now store the generated dataset
     for _ in 0..nb_points {
-        objects.append(&mut get_point(factor, &space_name, rng, &die));
+        objects.append(&mut generate_points(factor, &space_name, rng, &die));
     }
 
-    store(format!("{}k", nb_points).as_str(), objects);
+    store(format!("{}k.objects", nb_points).as_str(), objects);
 }
 
 #[derive(StructOpt, Debug)]
@@ -144,6 +139,6 @@ fn main() {
     let die = Uniform::from(0.0..1.0);
 
     for dataset in opt.datasets {
-        get_space(dataset, factor, &mut rng, &die);
+        generate_data(dataset, factor, &mut rng, &die);
     }
 }
