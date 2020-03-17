@@ -30,7 +30,6 @@ mercator_db = "^0.1"
 [patch.crates-io]
 mercator_db = { path = "../mercator_db" }
 ironsea_index = { path = "../ironsea_index" }
-ironsea_store = { path = "../ironsea_store" }
 
 ironsea_index_hashmap = { path = "../ironsea_index_hashmap" }
 ironsea_index_sfc_dbc = { path = "../ironsea_index_sfc_dbc" }
