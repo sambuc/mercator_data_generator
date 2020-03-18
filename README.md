@@ -27,11 +27,8 @@ This enables the index implementations to be agnostic from the underlying data s
 Checkout the dependencies in the parent folder:
  * mercator_db
  * ironsea_index
- * ironsea_store
- * ironsea_table
  * ironsea_index_hashmap
  * ironsea_index_sfc_dbc
- * ironsea_table_vector
 
 This tool takes as arguments a list of number of features to generate.
 One thousand (1000) positions are generated per feature. For each number
@@ -42,6 +39,7 @@ provided a dataset will be generated under:
 You can also specify a factor value, which will generate for each feature `factor` times features sharing the same 1000 positions.
 
 For example:
+
 ```sh
 # Generate 3 datasets, with 1k, 10k, 100k, random positions and
 #  1, 10 & 100 features ids.
