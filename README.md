@@ -22,13 +22,14 @@ This enables the index implementations to be agnostic from the underlying data s
 
  * Rust: https://www.rust-lang.org
 
-## Quick start
-
 Checkout the dependencies in the parent folder:
- * mercator_db
- * ironsea_index
- * ironsea_index_hashmap
- * ironsea_index_sfc_dbc
+
+ * mercator_db – https://github.com/epfl-dias/mercator_db
+ * ironsea_index – https://github.com/epfl-dias/ironsea_index
+ * ironsea_index_hashmap – https://github.com/epfl-dias/ironsea_index_hashmap
+ * ironsea_index_sfc_dbc – https://github.com/epfl-dias/ironsea_index_sfc_dbc
+
+## Quick start
 
 This tool takes as arguments a list of number of features to generate.
 One thousand (1000) positions are generated per feature. For each number
@@ -48,6 +49,22 @@ cargo run --release -- 1 10 100
 # Generate 3 datasets, with 1k, 10k, 100k, random positions and
 #  2, 20, 200 features ids.
 cargo run --release -- 1 10 100 -f 2
+```
+
+## Installation
+
+To install the software on the system, after che you can use:
+
+```sh
+cargo install --path .
+```
+
+Then in any folder you can then use:
+
+```sh
+mercator_data_generator 1 10 100
+# or
+mercator_data_generator 1 10 100 -f 2
 ```
 
 ## Acknowledgements
