@@ -53,7 +53,8 @@ cargo run --release -- 1 10 100 -f 2
 
 ## Installation
 
-To install the software on the system, after che you can use:
+To install the software on the system, after checking out the
+dependencies you can use:
 
 ```sh
 cargo install --path .
