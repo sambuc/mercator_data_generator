@@ -117,13 +117,14 @@ fn generate_data(nb_points: usize, factor: usize, rng: &mut ThreadRng, die: &Uni
     store(format!("{}k.objects", nb_points).as_str(), objects);
 }
 
+/// Tool to generate test data for Mercator, a spatial index.
 #[derive(StructOpt, Debug)]
 struct Opt {
-    /// Number of ids per positions generated
+    /// Number of ids per positions to generate.
     #[structopt(long, short)]
     factor: Option<usize>,
 
-    /// List of Number of features to be generated.
+    /// List of number of features to generate, each stored in its own file.
     datasets: Vec<usize>,
 }
 
