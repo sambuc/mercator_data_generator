@@ -1,15 +1,14 @@
 #![forbid(unsafe_code)]
 
-use std::fs::File;
-use std::io::BufWriter;
-
+use clap::Parser;
 use mercator_db::storage::model::v1::Shape;
 use mercator_db::storage::model::*;
 use rand::distributions::Distribution;
 use rand::distributions::Uniform;
 use rand::prelude::ThreadRng;
 use serde::Serialize;
-use structopt::StructOpt;
+use std::fs::File;
+use std::io::BufWriter;
 
 const POSITIONS_PER_SHAPE: usize = 1000;
 
@@ -111,17 +110,17 @@ fn generate_data(nb_points: usize, factor: usize, rng: &mut ThreadRng, die: &Uni
 
     // Now store the generated dataset
     for _ in 0..nb_points {
-        objects.append(&mut generate_points(factor, &space_name, rng, &die));
+        objects.append(&mut generate_points(factor, space_name, rng, die));
     }
 
     store(format!("{}k.objects", nb_points).as_str(), objects);
 }
 
 /// Tool to generate test data for Mercator, a spatial index.
-#[derive(StructOpt, Debug)]
+#[derive(Parser, Debug)]
 struct Opt {
     /// Number of ids per positions to generate.
-    #[structopt(long, short)]
+    #[arg(short, long)]
     factor: Option<usize>,
 
     /// List of number of features to generate, each stored in its own file.
@@ -129,12 +128,9 @@ struct Opt {
 }
 
 fn main() {
-    let opt = Opt::from_args();
+    let opt = Opt::parse();
 
-    let factor = match opt.factor {
-        None => 1,
-        Some(val) => val,
-    };
+    let factor = opt.factor.unwrap_or(1);
 
     let mut rng = rand::thread_rng();
     let die = Uniform::from(0.0..1.0);
